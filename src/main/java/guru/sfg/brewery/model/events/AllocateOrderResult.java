@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class AllocateOrderResult {
-    BeerOrderDto beerOrderDto;
+    private BeerOrderDto beerOrderDto;
     private Boolean allocationError = false;
     private Boolean pendingInventory = false;
 }
