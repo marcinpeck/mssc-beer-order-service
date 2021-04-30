@@ -33,6 +33,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -117,5 +118,22 @@ public class BeerOrderServiceImpl implements BeerOrderService {
             throw new RuntimeException("Beer Order Not Found");
         }
         throw new RuntimeException("Customer Not Found");
+    }
+
+    @Transactional
+    @Override
+    public boolean clearOrders(UUID customerId) {
+        Optional<Customer> customerOptional = customerRepository.findById(customerId);
+
+        customerOptional.ifPresentOrElse(customer -> {
+            List<BeerOrder> allOrders = beerOrderRepository.findAllByCustomer(customer);
+
+            beerOrderRepository.deleteAll(allOrders);
+
+            log.debug("Remove all orders for client: " + customer.getId());
+
+        }, () -> log.debug("Customer doesn't exist"));
+
+        return false;
     }
 }
